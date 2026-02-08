@@ -1,20 +1,19 @@
-// src/pages/NotesPage/index.tsx
-
-// import type { FakeDataType } from '../../../types'
 import type { FakeDataType } from '@/types'
 import { fakeData } from '@/src/fakeData'
+import NoteCard from '@/src/components/NoteCard'
 
 const index = () => {
-  console.log('🚀 ~ fakeData:', fakeData)
-
-  // Now you have full type safety!
-  fakeData.forEach((item: FakeDataType) => {
-    console.log(item.$id)
-    console.log(item.body)
-    console.log(item.colors)
-  })
-
-  return <div>Notes Page</div>
+  // console.log('🚀 ~ fakeData:', fakeData)
+  return (
+    <div>
+      {fakeData.map((note: FakeDataType) => (
+        <NoteCard
+          key={note.$id}
+          note={note}
+        />
+      ))}
+    </div>
+  )
 }
 
 export default index
