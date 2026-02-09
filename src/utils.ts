@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import type { MousePointerPosType } from '@/types'
 import type { RefObject } from 'react'
 
 export const setNewOffset = (
   card: HTMLDivElement,
-  mouseMoveDir: MousePointerPosType
+  mouseMoveDir: MousePointerPosType = { x: 0, y: 0 }
 ) => {
   return {
     x: Math.max(0, card.offsetLeft - mouseMoveDir.x),
@@ -34,4 +37,12 @@ export const setZIndex = (
     const htmlCard = card as HTMLElement
     htmlCard.style.zIndex = `${highestZIndex - 1}`
   })
+}
+
+export const bodyParser = (value: any) => {
+  try {
+    return JSON.parse(value)
+  } catch (error) {
+    return value
+  }
 }

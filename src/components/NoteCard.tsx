@@ -1,18 +1,23 @@
 import type { NoteDataType, MousePointerPosType } from '@/types'
 import Trash from '@/src/icons/Trash'
 import { useEffect, useRef, useState } from 'react'
-import { autoGrow, setNewOffset, setZIndex } from '../utils'
+import { autoGrow, bodyParser, setNewOffset, setZIndex } from '../utils'
+import { db } from '../apppwrite/databases'
+import Spinner from '../icons/Spinner'
 
 const NoteCard = ({ note }: { note: NoteDataType }) => {
-  const body = JSON.parse(note.body)
-  const colors = JSON.parse(note.colors)
+  const body = bodyParser(note.body)
+  const colors = bodyParser(note.colors)
   const mouseStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
 
+  const [saving, setSaving] = useState(false)
+
   const [position, setPosition] = useState<MousePointerPosType>(
-    JSON.parse(note.position)
+    bodyParser(note.position)
   )
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const cardRef = useRef<HTMLDivElement | null>(null)
+  const keyUpTimer = useRef<number>(0)
 
   useEffect(() => {
     autoGrow(textAreaRef)
@@ -47,9 +52,34 @@ const NoteCard = ({ note }: { note: NoteDataType }) => {
     setPosition(boundedOffset)
   }
 
-  const mouseUp = () => {
+  const mouseUp = async () => {
     document.removeEventListener('mousemove', mouseMove)
     document.removeEventListener('mouseup', mouseUp)
+
+    if (!cardRef.current) return
+    saveData('position', JSON.stringify(setNewOffset(cardRef.current)))
+  }
+
+  const saveData = async (key: string, value: string) => {
+    const payload = { [key]: value }
+    try {
+      await db.notes.updateRow(note.$id, payload)
+    } catch (error) {
+      console.error('🚀 ~ saveData ~ error:', error)
+    }
+    setSaving(false)
+  }
+
+  const handleOnKeyUp = () => {
+    setSaving(true)
+
+    if (keyUpTimer.current) {
+      clearTimeout(keyUpTimer.current)
+    }
+
+    keyUpTimer.current = setTimeout(() => {
+      saveData('body', textAreaRef.current?.value ?? '')
+    }, 1000)
   }
 
   return (
@@ -68,9 +98,16 @@ const NoteCard = ({ note }: { note: NoteDataType }) => {
         style={{ backgroundColor: colors.colorHeader }}
       >
         <Trash />
+        {saving && (
+          <div className='card-saving'>
+            <Spinner color={colors.colorText} />
+            <span style={{ color: colors.colorText }}>Saving...</span>
+          </div>
+        )}
       </div>
       <div className='card-body'>
         <textarea
+          onKeyUp={handleOnKeyUp}
           onFocus={() => setZIndex(cardRef)}
           ref={textAreaRef}
           style={{ color: colors.colorText }}
