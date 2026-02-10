@@ -1,11 +1,16 @@
 import type { NoteDataType, MousePointerPosType } from '@/types'
-import Trash from '@/src/icons/Trash'
 import { useEffect, useRef, useState } from 'react'
 import { autoGrow, bodyParser, setNewOffset, setZIndex } from '../utils'
 import { db } from '../apppwrite/databases'
 import Spinner from '../icons/Spinner'
+import DeleteButton from './DeleteButton'
 
-const NoteCard = ({ note }: { note: NoteDataType }) => {
+type NoteCardProps = {
+  note: NoteDataType
+  setNotes: React.Dispatch<React.SetStateAction<NoteDataType[]>>
+}
+
+const NoteCard = ({ note, setNotes }: NoteCardProps) => {
   const body = bodyParser(note.body)
   const colors = bodyParser(note.colors)
   const mouseStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
@@ -24,6 +29,9 @@ const NoteCard = ({ note }: { note: NoteDataType }) => {
   }, [])
 
   const mouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement
+    if (target.className !== 'card-header') return
+
     mouseStartPos.current.x = event.clientX
     mouseStartPos.current.y = event.clientY
 
@@ -97,7 +105,10 @@ const NoteCard = ({ note }: { note: NoteDataType }) => {
         className='card-header'
         style={{ backgroundColor: colors.colorHeader }}
       >
-        <Trash />
+        <DeleteButton
+          noteId={note.$id}
+          setNotes={setNotes}
+        />
         {saving && (
           <div className='card-saving'>
             <Spinner color={colors.colorText} />

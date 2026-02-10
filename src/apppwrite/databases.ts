@@ -8,6 +8,7 @@ type WrapperFunctionType = {
     rowId: string,
     payload: NoteDataTypePayload
   ) => Promise<Models.DefaultRow>
+  deleteRow: (rowId: string) => Promise<object>
 }
 type DBType = Record<string, WrapperFunctionType>
 
@@ -29,6 +30,12 @@ collections.forEach((collection: CollectionType) => {
         data: payload,
       })
     },
+    deleteRow: async (rowId: string) =>
+      await tablesDB.deleteRow({
+        databaseId: collection.dbId,
+        tableId: collection.tableId,
+        rowId,
+      }),
   }
 })
 
