@@ -9,9 +9,9 @@ type ProtectedRouteProps = {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useContext(NotesContext)
 
-  if (loading) return null
+  // if (loading) return null
 
-  if (!user) {
+  if (!loading && !user) {
     return (
       <Navigate
         to='/signin'

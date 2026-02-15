@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useContext(NotesContext)
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return null
 
   if (user) {
     return (
