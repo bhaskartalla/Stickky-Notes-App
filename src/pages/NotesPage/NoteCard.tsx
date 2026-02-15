@@ -37,20 +37,6 @@ const NoteCard = ({ note }: NoteCardProps) => {
     setZIndex(cardRef)
   }, [])
 
-  const mouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement
-    if (target.id !== 'card-header') return
-
-    mouseStartPos.current.x = event.clientX
-    mouseStartPos.current.y = event.clientY
-
-    setZIndex(cardRef)
-    setSelectedNote(note)
-
-    document.addEventListener('mousemove', mouseMove)
-    document.addEventListener('mouseup', mouseUp)
-  }
-
   const mouseMove = (event: MouseEvent) => {
     const mouseMoveDir = {
       x: mouseStartPos.current.x - event.clientX,
