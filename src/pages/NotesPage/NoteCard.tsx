@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import {
   autoGrow,
   bodyParser,
+  getToastErrorMessage,
   setNewOffset,
   setZIndex,
   STATUS,
@@ -21,7 +22,8 @@ const NoteCard = ({ note }: NoteCardProps) => {
   const body = bodyParser(note.body)
   const colors = bodyParser(note.colors)
   const mouseStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
-  const { setSelectedNote, setStatus, user } = useContext(NotesContext)
+  const { setSelectedNote, setStatus, user, setToast } =
+    useContext(NotesContext)
 
   const [position, setPosition] = useState<MousePointerPosType>(
     bodyParser(note.position)
@@ -83,8 +85,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
       await updateNote(user?.uid ?? '', note.$id, payload)
       // await dbFunctions.notes.updateDocument(note.$id, payload)
     } catch (error) {
-      // TODO: show toast message
-      console.error('🚀 ~ saveData ~ error:', error)
+      setToast(getToastErrorMessage(error))
     }
     setStatus('')
   }

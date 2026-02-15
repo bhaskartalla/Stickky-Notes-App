@@ -2,12 +2,13 @@ import { NotesContext } from '@/src/context/NotesContext'
 import { lazy, useContext } from 'react'
 import { Outlet } from 'react-router-dom'
 import styles from './styles.module.css'
+import Toast from '../Toast'
 
 const Saving = lazy(() => import('./Saving'))
 const UserInfo = lazy(() => import('./UserInfo'))
 
 const HeaderLayout = () => {
-  const { user, status } = useContext(NotesContext)
+  const { user, status, toast, setToast } = useContext(NotesContext)
 
   return (
     <>
@@ -25,6 +26,13 @@ const HeaderLayout = () => {
         </div>
       </header>
       <Outlet />
+      {toast.message && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ message: '' })}
+        />
+      )}
     </>
   )
 }

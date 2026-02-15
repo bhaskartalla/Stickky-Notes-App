@@ -58,3 +58,8 @@ export type UserDataType = {
   photoURL: string
   provider: 'email' | 'google'
 }
+
+export type ToastType = {
+  message: string
+  type?: 'success' | 'error'
+}

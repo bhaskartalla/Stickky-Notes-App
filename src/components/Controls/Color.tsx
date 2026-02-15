@@ -2,18 +2,20 @@ import type { ColorType } from '@/types'
 import { useContext } from 'react'
 import styles from './styles.module.css'
 import { NotesContext } from '@/src/context/NotesContext'
-import { STATUS } from '@/src/utils'
+import { getToastErrorMessage, STATUS } from '@/src/utils'
 // import { dbFunctions } from '@/src/firebaseConfig/dbFunctions'
 import { updateNote } from '@/src/firebaseConfig/firestore'
 
 const Color = ({ color }: { color: ColorType }) => {
-  const { selectedNote, setNotes, setStatus, user } = useContext(NotesContext)
+  const { selectedNote, setNotes, setStatus, user, setToast } =
+    useContext(NotesContext)
 
   const changeColor = async () => {
     if (selectedNote === null) return
     try {
       setStatus(STATUS.SAVING)
       const payload = { colors: JSON.stringify(color) }
+      await updateNote(user?.uid ?? '', selectedNote.$id, payload)
       setNotes((prev) => {
         const curretIndex = prev.findIndex(
           (note) => note.$id === selectedNote.$id
@@ -27,12 +29,9 @@ const Color = ({ color }: { color: ColorType }) => {
         notes[curretIndex] = updatedNote
         return notes
       })
-      await updateNote(user?.uid ?? '', selectedNote.$id, payload)
-
       // await dbFunctions.notes.updateDocument(selectedNote.$id, payload)
     } catch (error) {
-      // TODO: show toast message
-      console.error('🚀 ~ saveData ~ error:', error)
+      setToast(getToastErrorMessage(error))
     }
     setStatus('')
   }

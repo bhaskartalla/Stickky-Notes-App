@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Trash from '@/src/assets/icons/Trash'
 import { NotesContext } from '@/src/context/NotesContext'
-import { STATUS } from '@/src/utils'
+import { getToastErrorMessage, STATUS } from '@/src/utils'
 import { deleteNote } from '../firebaseConfig/firestore'
 // import { dbFunctions } from '@/src/firebaseConfig/dbFunctions'
 
@@ -10,7 +10,7 @@ type DeleteButtonProps = {
 }
 
 const DeleteButton = ({ noteId }: DeleteButtonProps) => {
-  const { setNotes, setStatus, user } = useContext(NotesContext)
+  const { setNotes, setStatus, user, setToast } = useContext(NotesContext)
 
   const handleDelete = async () => {
     try {
@@ -19,8 +19,7 @@ const DeleteButton = ({ noteId }: DeleteButtonProps) => {
       // await dbFunctions.notes.deleteDocument(noteId)
       setNotes((prev) => prev.filter(({ $id }) => $id !== noteId))
     } catch (error) {
-      // TODO: show toast message
-      console.error('🚀 ~ handleDelete ~ error:', error)
+      setToast(getToastErrorMessage(error))
     }
     setStatus('')
   }

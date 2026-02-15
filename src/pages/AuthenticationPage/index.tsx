@@ -10,10 +10,10 @@ const getErrorMessage = (error: FirebaseError) => {
   switch (error.code) {
     case 'auth/invalid-credential':
       return 'Invalid email or password.'
-      break
+
     case 'auth/user-not-found':
       return 'User does not exist.'
-      break
+
     default:
       return 'Login failed. Please try again.'
   }

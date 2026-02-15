@@ -27,8 +27,7 @@ export const createUser = async (userId: string, userData: UserDataType) => {
     )
     return userId
   } catch (error) {
-    console.error('Error creating user:', error)
-    throw error
+    throw new Error('Error creating user ')
   }
 }
 
@@ -43,8 +42,7 @@ export const getUser = async (userId: string) => {
       throw new Error('User not found')
     }
   } catch (error) {
-    console.error('Error getting user:', error)
-    throw error
+    throw new Error('Error getting user ')
   }
 }
 
@@ -55,10 +53,8 @@ export const updateUser = async (userId: string, updates: UserDataType) => {
       ...updates,
       updatedAt: serverTimestamp(),
     })
-    console.log('User updated successfully')
   } catch (error) {
-    console.error('Error updating user:', error)
-    throw error
+    throw new Error('Error updating user ')
   }
 }
 
@@ -66,10 +62,8 @@ export const deleteUser = async (userId: string) => {
   try {
     const userRef = doc(db, 'users', userId)
     await deleteDoc(userRef)
-    console.log('User deleted successfully')
   } catch (error) {
-    console.error('Error deleting user:', error)
-    throw error
+    throw new Error('Error deleting user ')
   }
 }
 
@@ -85,15 +79,13 @@ export const createNote = async (userId: string, noteData: NoteDataType) => {
       colors: noteData.colors || '',
       position: noteData.position || '',
     })
-    console.log('Note created with ID:', docRef.id)
     const response = {
       $id: docRef.id,
       ...noteData,
     }
     return response
   } catch (error) {
-    console.error('Error creating note:', error)
-    throw error
+    throw new Error('Error creating note ')
   }
 }
 
@@ -108,8 +100,7 @@ export const getNote = async (userId: string, noteId: string) => {
       throw new Error('Note not found')
     }
   } catch (error) {
-    console.error('Error getting note:', error)
-    throw error
+    throw new Error('Error getting note ')
   }
 }
 
@@ -125,8 +116,7 @@ export const getUserNotes = async (userId: string) => {
 
     return notes
   } catch (error) {
-    console.error('Error getting notes:', error)
-    throw error
+    throw new Error('Error getting notes ')
   }
 }
 
@@ -142,8 +132,7 @@ export const updateNote = async (
       updatedAt: serverTimestamp(),
     })
   } catch (error) {
-    console.error('Error updating note:', error)
-    throw error
+    throw new Error('Error updating note ')
   }
 }
 
@@ -151,10 +140,8 @@ export const deleteNote = async (userId: string, noteId: string) => {
   try {
     const noteRef = doc(db, 'users', userId, 'notes', noteId)
     await deleteDoc(noteRef)
-    console.log('Note deleted successfully')
   } catch (error) {
-    console.error('Error deleting note:', error)
-    throw error
+    throw new Error('Error deleting note ')
   }
 }
 
@@ -163,10 +150,8 @@ export const deleteAllUserNotes = async (userId: string) => {
     const notes = await getUserNotes(userId)
     const deletePromises = notes.map((note) => deleteNote(userId, note.id))
     await Promise.all(deletePromises)
-    console.log(`Deleted ${notes.length} notes for user ${userId}`)
   } catch (error) {
-    console.error('Error deleting all notes:', error)
-    throw error
+    throw new Error('Error deleting all notes ')
   }
 }
 
@@ -183,8 +168,7 @@ export const searchNotes = async (userId: string, searchTerm: string) => {
 
     return filteredNotes
   } catch (error) {
-    console.error('Error searching notes:', error)
-    throw error
+    throw new Error('Error searching notes ')
   }
 }
 
@@ -201,11 +185,9 @@ export const createMultipleNotes = async (
       createNote(userId, noteData)
     )
     const noteIds = await Promise.all(promises)
-    console.log(`Created ${noteIds.length} notes successfully`)
     return noteIds
   } catch (error) {
-    console.error('Error creating multiple notes:', error)
-    throw error
+    throw new Error('Error creating multiple notes ')
   }
 }
 
@@ -214,7 +196,6 @@ export const getUserNoteCount = async (userId: string) => {
     const notes = await getUserNotes(userId)
     return notes.length
   } catch (error) {
-    console.error('Error getting note count:', error)
-    throw error
+    throw new Error('Error getting note count ')
   }
 }

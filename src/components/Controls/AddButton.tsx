@@ -1,6 +1,6 @@
 import { useContext, useRef } from 'react'
 import colors from '@/src/utils/colors.json'
-import { STATUS } from '@/src/utils'
+import { getToastErrorMessage, STATUS } from '@/src/utils'
 import { NotesContext } from '@/src/context/NotesContext'
 // import { dbFunctions } from '@/src/firebaseConfig/dbFunctions'
 import Plus from '@/src/assets/icons/Plus'
@@ -10,7 +10,7 @@ import { createNote } from '@/src/firebaseConfig/firestore'
 const AddButton = () => {
   const startingPos = useRef(70)
 
-  const { setNotes, setSelectedNote, setStatus, user } =
+  const { setNotes, setSelectedNote, setStatus, user, setToast } =
     useContext(NotesContext)
 
   const addNote = async () => {
@@ -31,8 +31,7 @@ const AddButton = () => {
       setNotes((prev) => [...prev, response])
       setSelectedNote(response)
     } catch (error) {
-      // TODO: show toast message
-      console.error('🚀 ~ addNote ~ error:', error)
+      setToast(getToastErrorMessage(error))
     }
     setStatus('')
   }

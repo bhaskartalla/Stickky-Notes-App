@@ -1,4 +1,5 @@
-import type { MousePointerPosType } from '@/types'
+import type { MousePointerPosType, ToastType } from '@/types'
+import { FirebaseError } from 'firebase/app'
 import type { RefObject } from 'react'
 
 export const setNewOffset = (
@@ -58,3 +59,13 @@ export const STATUS = Object.freeze({
   DELETING: 'Deleting',
   CREATING: 'Creating',
 })
+
+export const getToastErrorMessage = (error: unknown): ToastType => {
+  if (error instanceof FirebaseError) {
+    return { message: error.message, type: 'error' }
+  } else if (error instanceof Error) {
+    return { message: error.message, type: 'error' }
+  } else {
+    return { message: 'Unknown error occurred', type: 'error' }
+  }
+}

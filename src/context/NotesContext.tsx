@@ -1,4 +1,4 @@
-import type { NoteDataType } from '@/types'
+import type { NoteDataType, ToastType } from '@/types'
 import type { User } from 'firebase/auth'
 import { createContext, type Dispatch, type SetStateAction } from 'react'
 
@@ -12,6 +12,8 @@ type NotesContextType = {
   status: string
   setStatus: Dispatch<SetStateAction<string>>
   user: User | null
+  toast: ToastType
+  setToast: Dispatch<SetStateAction<ToastType>>
 }
 
 export const NotesContext = createContext({
@@ -24,4 +26,6 @@ export const NotesContext = createContext({
   status: '',
   setStatus: () => {},
   user: null,
+  toast: {} as ToastType,
+  setToast: () => {},
 } as NotesContextType)
