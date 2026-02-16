@@ -19,11 +19,12 @@ type NoteCardProps = {
 }
 
 const NoteCard = ({ note }: NoteCardProps) => {
+  const { setSelectedNote, setStatus, user, setToast } =
+    useContext(NotesContext)
+
   const body = bodyParser(note.body)
   const colors = bodyParser(note.colors)
   const pointerStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
-  const { setSelectedNote, setStatus, user, setToast } =
-    useContext(NotesContext)
   const [position, setPosition] = useState<MousePointerPosType>(
     bodyParser(note.position)
   )

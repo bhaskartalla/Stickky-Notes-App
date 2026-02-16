@@ -10,14 +10,19 @@ type DeleteButtonProps = {
 }
 
 const DeleteButton = ({ noteId }: DeleteButtonProps) => {
-  const { setNotes, setStatus, user, setToast } = useContext(NotesContext)
+  const { setNotes, setStatus, user, setToast, setSelectedNote } =
+    useContext(NotesContext)
 
   const handleDelete = async () => {
     try {
       setStatus(STATUS.DELETING)
       await deleteNote(user?.uid ?? '', noteId)
       // await dbFunctions.notes.deleteDocument(noteId)
-      setNotes((prev) => prev.filter(({ $id }) => $id !== noteId))
+      setNotes((prev) => {
+        const updatedNotes = prev.filter(({ $id }) => $id !== noteId)
+        setSelectedNote(updatedNotes.length ? updatedNotes[0] : null)
+        return updatedNotes
+      })
     } catch (error) {
       setToast(getToastErrorMessage(error))
     }
