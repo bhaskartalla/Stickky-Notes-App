@@ -11,11 +11,11 @@ const Controls = () => {
   const [lastScrollY, setLastScrollY] = useState(0)
 
   useEffect(() => {
-    const appElement = document.getElementById('app')
-    if (!appElement) return
+    const noteCanvas = document.getElementById('note-canvas')
+    if (!noteCanvas) return
 
     const handleScroll = () => {
-      const currentScrollY = appElement.scrollTop
+      const currentScrollY = noteCanvas.scrollTop
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
         setIsHidden(true)
       } else if (currentScrollY < lastScrollY) {
@@ -24,9 +24,9 @@ const Controls = () => {
       setLastScrollY(currentScrollY)
     }
 
-    appElement.addEventListener('scroll', handleScroll, { passive: true })
+    noteCanvas.addEventListener('scroll', handleScroll, { passive: true })
 
-    return () => appElement.removeEventListener('scroll', handleScroll)
+    return () => noteCanvas.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
   return (

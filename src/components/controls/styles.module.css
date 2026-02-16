@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
+  aspect-ratio: 1;
   width: 40px;
   border-radius: 50%;
   cursor: pointer;
@@ -30,13 +30,13 @@
 }
 
 .add_btn:hover {
-  height: 45px;
+  aspect-ratio: 1;
   width: 45px;
 }
 
 .color {
   background-color: grey;
-  height: 40px;
+  aspect-ratio: 1;
   width: 40px;
   border-radius: 50%;
 
@@ -45,7 +45,7 @@
 }
 
 .color:hover {
-  height: 45px;
+  aspect-ratio: 1;
   width: 45px;
 }
 
@@ -63,5 +63,14 @@
     transform: translate(-50%, calc(100% + 2rem));
     opacity: 0;
     pointer-events: none;
+  }
+
+  .add_btn {
+    width: 35px;
+    aspect-ratio: 1;
+  }
+
+  .color {
+    width: 35px;
   }
 }

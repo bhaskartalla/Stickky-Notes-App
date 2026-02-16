@@ -8,7 +8,7 @@ export const setNewOffset = (
 ) => {
   return {
     x: Math.max(0, card.offsetLeft - mouseMoveDir.x),
-    y: Math.max(60, card.offsetTop - mouseMoveDir.y), // 60 should match with the header height to avoid card overlapping on header section
+    y: Math.max(0, card.offsetTop - mouseMoveDir.y),
   }
 }
 
