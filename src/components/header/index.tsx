@@ -8,7 +8,7 @@ const Saving = lazy(() => import('./Saving'))
 const UserInfo = lazy(() => import('./UserInfo'))
 
 const HeaderLayout = () => {
-  const { status, toast, setToast } = useContext(NotesContext)
+  const { status, toast, setToast, user } = useContext(NotesContext)
 
   return (
     <>
@@ -22,7 +22,7 @@ const HeaderLayout = () => {
         </div>
         <div className={styles.header_content}>
           {status && <Saving status={status} />}
-          <UserInfo />
+          {user && <UserInfo />}
         </div>
       </header>
       <Outlet />

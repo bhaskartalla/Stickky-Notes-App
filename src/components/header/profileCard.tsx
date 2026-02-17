@@ -24,23 +24,22 @@ const ProfileCard = ({ isPopUpOpen }: ProfileCardProps) => {
   return (
     <div className={`${styles.user_popup} ${isPopUpOpen ? styles.active : ''}`}>
       <div className={styles.popup_header}>
-        <div className={styles.profile_avatar}>
-          {user.photoURL ? (
-            <img
-              src={user.photoURL}
-              alt='User Profile'
-              referrerPolicy='no-referrer'
-              loading='lazy'
-            />
-          ) : (
-            <span className={styles.initials}>
-              {(user.displayName ?? '')
-                .split(' ')
-                .map((name: string) => name[0]?.toUpperCase())
-                .join('')}
-            </span>
-          )}
-        </div>
+        {user.photoURL ? (
+          <img
+            className={styles.profile_avatar}
+            src={user.photoURL}
+            alt='User Profile'
+            referrerPolicy='no-referrer'
+            loading='lazy'
+          />
+        ) : (
+          <span className={styles.profile_avatar}>
+            {(user.displayName ?? '')
+              .split(' ')
+              .map((name: string) => name[0]?.toUpperCase())
+              .join('')}
+          </span>
+        )}
         <div className={styles.profile_name}>{user.displayName}</div>
       </div>
 
