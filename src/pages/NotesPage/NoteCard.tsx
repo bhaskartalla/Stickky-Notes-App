@@ -25,9 +25,16 @@ const NoteCard = ({ note }: NoteCardProps) => {
   const body = bodyParser(note.body)
   const colors = bodyParser(note.colors)
   const pointerStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
-  const [position, setPosition] = useState<MousePointerPosType>(
-    bodyParser(note.position)
-  )
+  const [position, setPosition] = useState<MousePointerPosType>({
+    x: 0,
+    y: 0,
+  })
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPosition(bodyParser(note.position))
+  }, [note.position])
+
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const cardRef = useRef<HTMLDivElement | null>(null)
   const keyUpTimer = useRef<number>(0)

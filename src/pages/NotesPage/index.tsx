@@ -14,9 +14,9 @@ const NotesPage = () => {
       id='note-canvas'
       className={styles.notes_canvas}
     >
-      {notes.map((note: NoteDataType) => (
+      {notes.map((note: NoteDataType, index: number) => (
         <NoteCard
-          key={note.$id}
+          key={`${note.$id}_${index}`}
           note={note}
         />
       ))}

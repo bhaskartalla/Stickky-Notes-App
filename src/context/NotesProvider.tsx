@@ -1,11 +1,13 @@
 import type { NoteDataType, ToastType } from '@/types'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Spinner from '@/src/assets/icons/Spinner'
 import { NotesContext } from './NotesContext'
 import { observeAuthState } from '../firebaseConfig/auth'
-import type { User } from 'firebase/auth'
+import type { Unsubscribe, User } from 'firebase/auth'
 import { getUserNotes } from '../firebaseConfig/firestore'
 import { getToastErrorMessage } from '../utils'
+import { db } from '../firebaseConfig/config'
+import { collection, onSnapshot, query } from 'firebase/firestore'
 
 const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
@@ -15,22 +17,46 @@ const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [toast, setToast] = useState<ToastType>({} as ToastType)
 
-  const fetchUserNotes = async (uid: string) => {
-    try {
-      const notes = await getUserNotes(uid)
-      setNotes(notes.map((note) => ({ ...note, $id: note.id })))
-    } catch (error) {
-      if (user?.uid) setToast(getToastErrorMessage(error))
-    }
+  const realtimeUnsubscribeRef = useRef<Unsubscribe | null>(null)
+
+  const subscribeToUserNotes = (uid: string): Unsubscribe => {
+    const notesRef = collection(db, 'users', uid, 'notes')
+
+    return onSnapshot(
+      notesRef,
+      (snapshot) => {
+        const updatedNotes = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          $id: doc.id,
+        }))
+        setNotes(updatedNotes)
+      },
+      (error) => {
+        setToast(getToastErrorMessage(error))
+      }
+    )
   }
 
   useEffect(() => {
-    const unsubscribe = observeAuthState(async (user: User | null) => {
-      setUser(user)
-      await fetchUserNotes(user?.uid ?? '')
+    const unsubscribeAuth = observeAuthState((authUser: User | null) => {
+      setUser(authUser)
+
+      realtimeUnsubscribeRef.current?.()
+      realtimeUnsubscribeRef.current = null
+
+      if (!authUser) {
+        setNotes([])
+        return
+      }
+
+      realtimeUnsubscribeRef.current = subscribeToUserNotes(authUser.uid)
       setLoading(false)
     })
-    return unsubscribe
+
+    return () => {
+      unsubscribeAuth()
+      realtimeUnsubscribeRef.current?.()
+    }
   }, [])
 
   return (
