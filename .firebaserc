@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "stickky-notes-app-e7ab7"
-  }
+    "default": "stickky-notes-app-e7ab7",
+    "production": "stickky-notes-app-e7ab7"
+  },
+  "targets": {},
+  "etags": {}
 }
