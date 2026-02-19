@@ -7,18 +7,14 @@
   },
   "hosting": {
     "site": "stickky-note-app",
-    "public": "public",
+    "public": "dist",
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
     ],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   },
   "auth": {
     "providers": {}
