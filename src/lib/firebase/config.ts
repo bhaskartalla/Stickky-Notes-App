@@ -17,8 +17,6 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
-console.log({ env: import.meta.env })
-
 // Connect to emulators in development
 if (window.location.hostname === 'localhost') {
   try {

@@ -7,7 +7,6 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth()
-  console.log('🚀 ~ ProtectedRoute ~ user:', user)
 
   if (!isLoading && !user) {
     return (
