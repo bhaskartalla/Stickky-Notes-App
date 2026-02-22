@@ -70,3 +70,20 @@ export const getToastErrorMessage = (error: unknown): ToastType => {
 export const getRandomInt = (max = 4) => {
   return Math.floor(Math.random() * max)
 }
+
+// TODO: configure the custom error msgs
+export const getErrorMessage = (error: FirebaseError) => {
+  switch (error.code) {
+    case 'auth/invalid-credential':
+      return 'Invalid email or password.'
+
+    case 'auth/user-not-found':
+      return 'User does not exist.'
+
+    case 'auth/email-already-in-use':
+      return 'Email already in use.'
+
+    default:
+      return 'Login failed. Please try again.'
+  }
+}

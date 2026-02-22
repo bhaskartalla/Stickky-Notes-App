@@ -1,26 +1,10 @@
 import { lazy, useState, type ChangeEvent } from 'react'
 import styles from '../components/AuthForm.module.css'
-import { FirebaseError } from 'firebase/app'
 import { authService } from '../auth.service'
+import { getToastErrorMessage } from '@/src/shared/utils'
 
 const SignIn = lazy(() => import('../components/SignIn'))
 const SignUp = lazy(() => import('../components/SignUp'))
-
-const getErrorMessage = (error: FirebaseError) => {
-  switch (error.code) {
-    case 'auth/invalid-credential':
-      return 'Invalid email or password.'
-
-    case 'auth/user-not-found':
-      return 'User does not exist.'
-
-    case 'auth/email-already-in-use':
-      return 'Email already in use.'
-
-    default:
-      return 'Login failed. Please try again.'
-  }
-}
 
 const AuthenticationPage = () => {
   const [isSignInView, setIsSignInView] = useState(true)
@@ -43,9 +27,7 @@ const AuthenticationPage = () => {
     try {
       await authService.signIn(email, password)
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        setErrorMessage(getErrorMessage(error))
-      }
+      setErrorMessage(getToastErrorMessage(error).message)
     }
   }
 
@@ -53,9 +35,7 @@ const AuthenticationPage = () => {
     try {
       await authService.signInWithGoogle()
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        setErrorMessage(getErrorMessage(error))
-      }
+      setErrorMessage(getToastErrorMessage(error).message)
     }
   }
 
@@ -73,9 +53,7 @@ const AuthenticationPage = () => {
     try {
       await authService.signUp(email, password)
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        setErrorMessage(getErrorMessage(error))
-      }
+      setErrorMessage(getToastErrorMessage(error).message)
     }
   }
 
