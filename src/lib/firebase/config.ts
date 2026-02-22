@@ -24,8 +24,8 @@ if (window.location.hostname === 'localhost') {
       disableWarnings: true,
     })
     connectFirestoreEmulator(db, 'localhost', 8080)
-    console.log('🔧 Connected to Firebase Emulators.')
+    console.log('🔧 Connected to Firebase Emulators')
   } catch (error) {
-    console.log('Emulators already connected.')
+    console.log('Emulators already connected')
   }
 }
