@@ -16,9 +16,9 @@ const AuthenticationPage = () => {
   const toggleLoginView = () => setIsSignInView((prev) => !prev)
 
   const [{ email, password, confirmPassword }, setCredentials] = useState({
-    email: 'test@gmail.com',
-    password: '9870314385',
-    confirmPassword: '9870314385',
+    email: '',
+    password: '',
+    confirmPassword: '',
   })
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

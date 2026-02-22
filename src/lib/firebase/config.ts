@@ -18,7 +18,7 @@ export const auth = getAuth(app)
 export const db = getFirestore(app)
 
 // Connect to emulators in development
-if (window.location.hostname !== 'localhost') {
+if (window.location.hostname === 'localhost') {
   try {
     connectAuthEmulator(auth, 'http://localhost:9099', {
       disableWarnings: true,
