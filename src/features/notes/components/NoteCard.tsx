@@ -1,9 +1,8 @@
 import type { NoteDataType, MousePointerPosType } from '@/types'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   autoGrow,
   getToastErrorMessage,
-  setNewOffset,
   setZIndex,
   STATUS,
 } from '@/src/shared/utils'
@@ -13,105 +12,24 @@ import { useNotes } from '../hooks/useNotes'
 import { useAuth } from '@/src/features/auth/hooks/useAuth'
 import DeleteButton from './DeleteButton'
 import { notesService } from '../notes.service'
+import { useNoteDrag } from '../hooks/useNoteDrag'
 
 type NoteCardProps = {
   note: NoteDataType
 }
 
 const NoteCard = ({ note }: NoteCardProps) => {
-  const { setSelectedNote, setStatus, setToast } = useNotes()
-  const { user } = useAuth()
-
-  const body = bodyParser(note.body)
-  const colors = bodyParser(note.colors)
-  const pointerStartPos = useRef<MousePointerPosType>({ x: 0, y: 0 })
-  const [position, setPosition] = useState<MousePointerPosType>({
-    x: 0,
-    y: 0,
-  })
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPosition(bodyParser(note.position))
-  }, [note.position])
-
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const cardRef = useRef<HTMLDivElement | null>(null)
   const keyUpTimer = useRef<number>(0)
-  const isDragging = useRef<boolean>(false)
 
-  const handlePointerDown = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    const target = event.target as HTMLElement
-    if (target.id !== 'card-header') return
+  const body = bodyParser(note.body)
+  const colors = bodyParser(note.colors)
 
-    event.preventDefault()
-
-    const clientX =
-      'touches' in event ? event.touches[0].clientX : event.clientX
-    const clientY =
-      'touches' in event ? event.touches[0].clientY : event.clientY
-
-    pointerStartPos.current.x = clientX
-    pointerStartPos.current.y = clientY
-    isDragging.current = true
-
+  useEffect(() => {
+    autoGrow(textAreaRef)
     setZIndex(cardRef)
-    setSelectedNote(note)
-
-    document.addEventListener('mousemove', handlePointerMove)
-    document.addEventListener('mouseup', handlePointerUp)
-    document.addEventListener('touchmove', handlePointerMove, {
-      passive: false,
-    })
-    document.addEventListener('touchend', handlePointerUp)
-  }
-
-  const handlePointerMove = (event: MouseEvent | TouchEvent) => {
-    if (!isDragging.current) return
-
-    if (event.type === 'touchmove') {
-      event.preventDefault()
-    }
-
-    const clientX =
-      'touches' in event ? event.touches[0].clientX : event.clientX
-    const clientY =
-      'touches' in event ? event.touches[0].clientY : event.clientY
-
-    const pointerMoveDir = {
-      x: pointerStartPos.current.x - clientX,
-      y: pointerStartPos.current.y - clientY,
-    }
-
-    pointerStartPos.current.x = clientX
-    pointerStartPos.current.y = clientY
-
-    if (!cardRef.current) return
-
-    const boundedOffset: MousePointerPosType = setNewOffset(
-      cardRef.current,
-      pointerMoveDir
-    )
-    setPosition(boundedOffset)
-  }
-
-  const handlePointerUp = async () => {
-    if (!isDragging.current) return
-
-    isDragging.current = false
-
-    document.removeEventListener('mousemove', handlePointerMove)
-    document.removeEventListener('mouseup', handlePointerUp)
-    document.removeEventListener('touchmove', handlePointerMove)
-    document.removeEventListener('touchend', handlePointerUp)
-
-    if (!cardRef.current) return
-
-    setStatus(STATUS.SAVING)
-    saveData('position', JSON.stringify(setNewOffset(cardRef.current)))
-  }
+  }, [])
 
   const saveData = async (key: string, value: string) => {
     const payload = { [key]: value }
@@ -123,6 +41,19 @@ const NoteCard = ({ note }: NoteCardProps) => {
     setStatus('')
   }
 
+  const handleDragEnd = async (position: MousePointerPosType) => {
+    setStatus(STATUS.SAVING)
+    await saveData('position', JSON.stringify(position))
+  }
+
+  const { setSelectedNote, setStatus, setToast } = useNotes()
+  const { user } = useAuth()
+  const { position, handlePointerDown } = useNoteDrag(
+    cardRef,
+    bodyParser(note.position),
+    handleDragEnd
+  )
+
   const handleOnKeyUp = () => {
     setStatus(STATUS.SAVING)
     if (keyUpTimer.current) {
@@ -132,18 +63,6 @@ const NoteCard = ({ note }: NoteCardProps) => {
       saveData('body', textAreaRef.current?.value ?? '')
     }, 1000)
   }
-
-  useEffect(() => {
-    autoGrow(textAreaRef)
-    setZIndex(cardRef)
-
-    return () => {
-      document.removeEventListener('mousemove', handlePointerMove)
-      document.removeEventListener('mouseup', handlePointerUp)
-      document.removeEventListener('touchmove', handlePointerMove)
-      document.removeEventListener('touchend', handlePointerUp)
-    }
-  }, [])
 
   return (
     <div
